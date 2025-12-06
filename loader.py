@@ -107,18 +107,27 @@ def main(args):
             address_format=32,
             memorysize_format=32,
         )
-        response = client.request_download(memory)
-        block_size_from_ecu = response.service_data.max_length
-        block_size = min(block_size_from_ecu, 256)
-        block_num = -(-block.size() // block_size)
-        print(f"block size: {block_size}, total blocks: {block_num}")
 
-        for i in range(1, block_num + 1):
-            start = (i - 1) * block_size
-            stop = i * block_size
-            data: bytes = bytes(block.data[start:stop])
-            client.transfer_data(i & 0xFF, data)
-            print(f"Send {i}")
+        response = client.request_download(memory)
+        max_block = response.service_data.max_length
+
+        # ограничиваем реальный размер блока
+        block_size = min(max_block, 256)
+
+        block_num = -(-block.size() // block_size)
+        print(f"block size from ECU: {max_block}, using: {block_size}, total blocks: {block_num}")
+
+        for block_index in range(block_num):
+            start = block_index * block_size
+            stop = start + block_size
+            data = bytes(block.data[start:stop])
+            if not data:
+                print(f"Skip empty chunk {block_index + 1}")
+                continue
+
+            seq = (block_index + 1) & 0xFF
+            print(f"Send {block_index + 1}, seq={seq}, len={len(data)}")
+            client.transfer_data(seq, data)
 
     with Client(conn, config=uds_config) as client:
         print("Change session to programming")
