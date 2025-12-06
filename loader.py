@@ -57,8 +57,8 @@ def main(args):
         "tx_data_length": 8,
         "tx_data_min_length": None,
         "tx_padding": 0,
-        "rx_flowcontrol_timeout": 1000,
-        "rx_consecutive_frame_timeout": 1000,
+        "rx_flowcontrol_timeout": 5000,
+        "rx_consecutive_frame_timeout": 5000,
         "override_receiver_stmin": None,
         "max_frame_size": 4095,
         "can_fd": False,
@@ -68,6 +68,7 @@ def main(args):
         "rate_limit_window_size": 0.2,
         "listen_mode": False,
     }
+
 
     uds_config = udsoncan.configs.default_client_config.copy()
     uds_config['request_timeout'] = 65
