@@ -67,11 +67,10 @@ def main(args):
         "rate_limit_max_bitrate": 1000000,
         "rate_limit_window_size": 0.2,
         "listen_mode": False,
-        "request_timeout": 15
     }
 
     uds_config = udsoncan.configs.default_client_config.copy()
-
+    uds_config['request_timeout'] = 15
     #bus = SeeedBus(channel="COM6", frame_type="EXT")
     bus = can.interface.Bus(
         channel="can0",
