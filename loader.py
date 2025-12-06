@@ -111,7 +111,7 @@ def main(args):
 
         response = client.request_download(memory)
         max_block = response.service_data.max_length
-        block_size = min(max_block, 125)
+        block_size = min(max_block, 128)
 
         block_num = -(-block.size() // block_size)
         print(f"[Block] addr=0x{base_addr:08X}, size={block.size()}, "
