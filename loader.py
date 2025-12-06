@@ -37,8 +37,8 @@ def append_data_to_block(address: int, data: bytearray):
         blocks.append(Block(address))
     blocks[-1].append(data)
 
-def main(args):
 
+def main(args):
     my_block_size = 1024
     with open(args.path, "rb") as fd:
         address = 0
@@ -71,16 +71,22 @@ def main(args):
 
     uds_config = udsoncan.configs.default_client_config.copy()
     uds_config['request_timeout'] = 65
-    #bus = SeeedBus(channel="COM6", frame_type="EXT")
-    #bus = can.interface.Bus(
-    #    channel="can0",
-    #    bustype="socketcan"
-    #)
-    bus = can.interface.Bus(
-        bustype="systec",
-        channel=0,
-        bitrate=500000
-    )
+
+    # bus = SeeedBus(channel="COM6", frame_type="EXT")
+
+    if args.port == 'can0':
+        bus = can.interface.Bus(
+            channel="can0",
+            bustype="socketcan"
+        )
+    elif args.port == 'systec':
+        bus = can.interface.Bus(
+            bustype="systec",
+            channel=0,
+            bitrate=500000
+        )
+    else:
+        raise ValueError
     print('INIT BUS')
     time.sleep(0.25)
     notifier = can.Notifier(bus, [])
@@ -94,7 +100,6 @@ def main(args):
     )
     conn = PythonIsoTpConnection(stack)
 
-
     def write_block(block: Block):
         memory = MemoryLocation(
             0x08020000 + block.address,
@@ -103,7 +108,7 @@ def main(args):
             memorysize_format=32,
         )
         response = client.request_download(memory)
-        block_size = int.from_bytes(response.get_payload()[2:], byteorder="big")
+        block_size = int.from_bytes(response.get_payload()[2:], byteorder="little")
         block_num = -(-block.size() // block_size)
         print(f"block size: {block_size}, total blocks: {block_num}")
 
@@ -113,7 +118,6 @@ def main(args):
             data: bytes = bytes(block.data[start:stop])
             client.transfer_data(i & 0xFF, data)
             print(f"Send {i}")
-
 
     with Client(conn, config=uds_config) as client:
         print("Change session to programming")
@@ -185,8 +189,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="CAN LOADER")
-    parser.add_argument('--path')
-    parser.add_argument('--port')
+    parser.add_argument('--path', default='smc.bin')
+    parser.add_argument('--port', default='can0')
     args = parser.parse_args()
 
     main(args)
