@@ -101,8 +101,9 @@ def main(args):
     conn = PythonIsoTpConnection(stack)
 
     def write_block(block: Block):
+        base_addr = 0x08020000 + block.address
         memory = MemoryLocation(
-            0x08020000 + block.address,
+            base_addr,
             block.size(),
             address_format=32,
             memorysize_format=32,
@@ -110,24 +111,25 @@ def main(args):
 
         response = client.request_download(memory)
         max_block = response.service_data.max_length
-
-        # ограничиваем реальный размер блока
-        block_size = min(max_block, 256)
+        block_size = min(max_block, 125)
 
         block_num = -(-block.size() // block_size)
-        print(f"block size from ECU: {max_block}, using: {block_size}, total blocks: {block_num}")
+        print(f"[Block] addr=0x{base_addr:08X}, size={block.size()}, "
+              f"max_from_ecu={max_block}, using={block_size}, total_blocks={block_num}")
 
         for block_index in range(block_num):
             start = block_index * block_size
             stop = start + block_size
             data = bytes(block.data[start:stop])
             if not data:
-                print(f"Skip empty chunk {block_index + 1}")
                 continue
 
             seq = (block_index + 1) & 0xFF
-            print(f"Send {block_index + 1}, seq={seq}, len={len(data)}")
+            cur_addr = base_addr + start
+
+            print(f"  Send {block_index + 1}, seq={seq}, len={len(data)}, addr=0x{cur_addr:08X}")
             client.transfer_data(seq, data)
+            time.sleep(0.04)
 
     with Client(conn, config=uds_config) as client:
         print("Change session to programming")
