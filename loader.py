@@ -71,7 +71,7 @@ def main(args):
 
 
     uds_config = udsoncan.configs.default_client_config.copy()
-    uds_config['request_timeout'] = 65
+    uds_config['request_timeout'] = 5
 
     # bus = SeeedBus(channel="COM6", frame_type="EXT")
 
