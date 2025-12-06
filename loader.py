@@ -131,73 +131,73 @@ def main(args):
             print(f"  Send {block_index + 1}, seq={seq}, len={len(data)}, addr=0x{cur_addr:08X}")
             client.transfer_data(seq, data)
             time.sleep(0.04)
-
-    with Client(conn, config=uds_config) as client:
-        print("Change session to programming")
-        client.change_session(2)
-        print("Reset ECU")
-        client.ecu_reset(3)
-        time.sleep(5)
-        print("Erasing flash")
-        routine_id = 0xFF00
-        try:
-            client.routine_control(routine_id, 1)
-        except NegativeResponseException:
-            pass
-        for _ in range(10):
-            time.sleep(0.5)
+    try:
+        with Client(conn, config=uds_config) as client:
+            print("Change session to programming")
+            client.change_session(2)
+            print("Reset ECU")
+            client.ecu_reset(3)
+            time.sleep(5)
+            print("Erasing flash")
+            routine_id = 0xFF00
             try:
-                result = client.routine_control(routine_id, 3)
-            except TimeoutException:
-                pass
+                client.routine_control(routine_id, 1)
             except NegativeResponseException:
                 pass
-            if result:
-                payload = result.get_payload()
-                if payload[-1] == 0x02:
-                    print("Finished")
-                    break
-                elif payload[-1] == 0x01:
-                    print("Erasing...")
-                else:
-                    print("Error")
-                    break
-        time.sleep(0.5)
-        for block in blocks:
-            write_block(block)
-            client.request_transfer_exit()
-
-        routine_id = 0xFF01
-        try:
-            client.routine_control(routine_id, 1)
-        except NegativeResponseException:
-            pass
-        for _ in range(10):
+            for _ in range(10):
+                time.sleep(0.5)
+                try:
+                    result = client.routine_control(routine_id, 3)
+                except TimeoutException:
+                    pass
+                except NegativeResponseException:
+                    pass
+                if result:
+                    payload = result.get_payload()
+                    if payload[-1] == 0x02:
+                        print("Finished")
+                        break
+                    elif payload[-1] == 0x01:
+                        print("Erasing...")
+                    else:
+                        print("Error")
+                        break
             time.sleep(0.5)
+            for block in blocks:
+                write_block(block)
+                client.request_transfer_exit()
+
+            routine_id = 0xFF01
             try:
-                result = client.routine_control(routine_id, 3)
-            except TimeoutException:
-                pass
+                client.routine_control(routine_id, 1)
             except NegativeResponseException:
                 pass
-            if result:
-                payload = result.get_payload()
-                if payload[-1] == 0x02:
-                    print("CRC is correct")
-                    break
-                elif payload[-1] == 0x01:
-                    print("Checking...")
-                else:
-                    print("CRC is incorrect")
-                    break
-        time.sleep(2)
-        print("Change session to default")
-        client.change_session(1)
-        print("Reset ECU")
-        client.ecu_reset(3)
-
-    notifier.stop()
-    bus.shutdown()
+            for _ in range(10):
+                time.sleep(0.5)
+                try:
+                    result = client.routine_control(routine_id, 3)
+                except TimeoutException:
+                    pass
+                except NegativeResponseException:
+                    pass
+                if result:
+                    payload = result.get_payload()
+                    if payload[-1] == 0x02:
+                        print("CRC is correct")
+                        break
+                    elif payload[-1] == 0x01:
+                        print("Checking...")
+                    else:
+                        print("CRC is incorrect")
+                        break
+            time.sleep(2)
+            print("Change session to default")
+            client.change_session(1)
+            print("Reset ECU")
+            client.ecu_reset(3)
+    finally:
+        notifier.stop()
+        bus.shutdown()
 
 
 if __name__ == '__main__':
