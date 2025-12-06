@@ -98,7 +98,7 @@ def main(args):
             memorysize_format=32,
         )
         response = client.request_download(memory)
-        block_size = int.from_bytes(response.get_payload()[2:])
+        block_size = int.from_bytes(response.get_payload()[2:], byteorder="big")
         block_num = -(-block.size() // block_size)
         print(f"block size: {block_size}, total blocks: {block_num}")
 
