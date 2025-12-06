@@ -87,19 +87,10 @@ def main(args):
             bitrate=500000
         )
     elif args.port == 'pcan':
-        can_bus = can.interface.Bus(
-            channel='PCAN_USBBUS1',  # Or the correct channel name/number
-            bustype='pcan',
-            fd=True,
-            f_clock_mhz=40,  # Example clock rate
-            nom_brp=5,       # Example nominal bitrate prescaler
-            nom_tseg1=11,    # Example nominal time segment 1
-            nom_tseg2=4,     # Example nominal time segment 2
-            nom_sjw=4,       # Example nominal synchronization jump width
-            data_brp=4,      # Example data bitrate prescaler
-            data_tseg1=3,    # Example data time segment 1
-            data_tseg2=1,    # Example data time segment 2
-            data_sjw=1       # Example data synchronization jump width
+        bus = can.interface.Bus(
+            bustype="pcan",
+            channel="PCAN_USBBUS1",  # имя канала, см. ниже
+            bitrate=500000  # нужная скорость (500k, 250k и т.д.)
         )
     else:
         raise ValueError
