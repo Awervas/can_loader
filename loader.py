@@ -73,9 +73,10 @@ def main(args):
 
     #bus = SeeedBus(channel="COM6", frame_type="EXT")
     bus = can.interface.Bus(
-        channel="can0",  # имя интерфейса в системе: can0, can1, vcan0...
+        channel="can0",
         bustype="socketcan"
     )
+    print('INIT BUS')
     time.sleep(0.25)
     notifier = can.Notifier(bus, [])
     tp_addr = isotp.Address(
@@ -183,3 +184,4 @@ if __name__ == '__main__':
     parser.add_argument('--port')
     args = parser.parse_args()
 
+    main(args)
