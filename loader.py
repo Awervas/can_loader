@@ -72,9 +72,14 @@ def main(args):
     uds_config = udsoncan.configs.default_client_config.copy()
     uds_config['request_timeout'] = 65
     #bus = SeeedBus(channel="COM6", frame_type="EXT")
+    #bus = can.interface.Bus(
+    #    channel="can0",
+    #    bustype="socketcan"
+    #)
     bus = can.interface.Bus(
-        channel="can0",
-        bustype="socketcan"
+        bustype="systec",
+        channel=0,
+        bitrate=500000
     )
     print('INIT BUS')
     time.sleep(0.25)
