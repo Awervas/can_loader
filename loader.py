@@ -94,8 +94,10 @@ def main(args):
         )
     else:
         raise ValueError
+
+
     print('INIT BUS')
-    time.sleep(0.25)
+    time.sleep(0.55)
     notifier = can.Notifier(bus, [])
     tp_addr = isotp.Address(
         isotp.AddressingMode.NormalFixed_29bits,
