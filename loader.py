@@ -71,9 +71,9 @@ def main(args):
 
 
     uds_config = udsoncan.configs.default_client_config.copy()
-    uds_config['request_timeout'] = 5
+    uds_config['request_timeout'] = 15
 
-    # bus = SeeedBus(channel="COM6", frame_type="EXT")
+    #
 
     if args.port == 'can0':
         bus = can.interface.Bus(
@@ -92,6 +92,10 @@ def main(args):
             channel="PCAN_USBBUS1",  # имя канала, см. ниже
             bitrate=500000  # нужная скорость (500k, 250k и т.д.)
         )
+
+    elif 'COM' in args.port.upper():
+        bus = SeeedBus(channel=args.port, frame_type="EXT")
+
     else:
         raise ValueError
 
