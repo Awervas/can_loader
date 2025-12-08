@@ -58,8 +58,8 @@ def main(args):
         "tx_data_length": 8,
         "tx_data_min_length": None,
         "tx_padding": 0,
-        "rx_flowcontrol_timeout": 5000,
-        "rx_consecutive_frame_timeout": 5000,
+        "rx_flowcontrol_timeout": 10000,
+        "rx_consecutive_frame_timeout": 15000,
         "override_receiver_stmin": None,
         "max_frame_size": 4095,
         "can_fd": False,
@@ -139,12 +139,13 @@ def main(args):
             start = (i - 1) * block_size
             stop = i * block_size
             data: bytes = bytes(block.data[start:stop])
-
-            try:
-                client.transfer_data(i & 0xFF, data)
-                time.sleep(0.1)
-            except TimeoutException:
-                pass
+            for _ in range(3):
+                try:
+                    client.transfer_data(i & 0xFF, data)
+                    time.sleep(0.1)
+                    break
+                except TimeoutException:
+                    continue
 
             print(f"Send {i}")
 
