@@ -120,7 +120,17 @@ def main(args):
             address_format=32,
             memorysize_format=32,
         )
-        response = client.request_download(memory)
+        for _ in range(3):
+            try:
+                response = client.request_download(memory)
+                break
+            except NegativeResponseException:
+                continue
+            except TimeoutException:
+                continue
+        else:
+            raise TimeoutException
+
         block_size = int.from_bytes(response.get_payload()[2:], byteorder='big')
         block_num = -(-block.size() // block_size)
         print(f"block size: {block_size}, total blocks: {block_num}")
@@ -135,6 +145,8 @@ def main(args):
                     break
                 except TimeoutException:
                     continue
+                except NegativeResponseException:
+                    break
             print(f"Send {i}")
 
     with Client(conn, config=uds_config) as client:
