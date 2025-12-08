@@ -132,7 +132,7 @@ def main(args):
             raise TimeoutException
 
         block_size = int.from_bytes(response.get_payload()[2:], byteorder='big')
-        block_size = 64
+        block_size = 16
         block_num = -(-block.size() // block_size)
         print(f"block size: {block_size}, total blocks: {block_num}")
 
@@ -145,9 +145,8 @@ def main(args):
                     client.transfer_data(i & 0xFF, data)
                     break
                 except TimeoutException:
-                    continue
-                except NegativeResponseException:
                     break
+
             print(f"Send {i}")
 
     with Client(conn, config=uds_config) as client:
