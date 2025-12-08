@@ -115,107 +115,92 @@ def main(args):
     conn = PythonIsoTpConnection(stack)
 
     def write_block(block: Block):
-        base_addr = 0x08020000 + block.address
         memory = MemoryLocation(
-            base_addr,
+            0x08020000 + block.address,
             block.size(),
             address_format=32,
             memorysize_format=32,
         )
-
         response = client.request_download(memory)
-        max_block = response.service_data.max_length
-        block_size = min(max_block, 512)
-
+        block_size = int.from_bytes(response.get_payload()[2:], byteorder='big')
         block_num = -(-block.size() // block_size)
-        print(f"[Block] addr=0x{base_addr:08X}, size={block.size()}, "
-              f"max_from_ecu={max_block}, using={block_size}, total_blocks={block_num}")
+        print(f"block size: {block_size}, total blocks: {block_num}")
 
-        for block_index in range(block_num):
-            start = block_index * block_size
-            stop = start + block_size
-            data = bytes(block.data[start:stop])
-            if not data:
-                continue
+        for i in range(1, block_num + 1):
+            start = (i - 1) * block_size
+            stop = i * block_size
+            data: bytes = bytes(block.data[start:stop])
+            client.transfer_data(i & 0xFF, data)
+            print(f"Send {i}")
 
-            seq = (block_index + 1) & 0xFF
-            cur_addr = base_addr + start
-
-            print(f"  Send {block_index + 1}, seq={seq}, len={len(data)}, addr=0x{cur_addr:08X}")
+    with Client(conn, config=uds_config) as client:
+        print("Change session to programming")
+        client.change_session(2)
+        print("Reset ECU")
+        client.ecu_reset(3)
+        time.sleep(5)
+        print("Erasing flash")
+        routine_id = 0xFF00
+        for erase_try in range(5):
             try:
-                client.transfer_data(seq, data)
-                time.sleep(0.2)
+                client.routine_control(routine_id, 1)
+                break
             except TimeoutException:
-                print(f"[ERROR] Timeout on TransferData seq={seq}, addr=0x{cur_addr:08X}, len={len(data)}")
-                raise
-
-    try:
-        with Client(conn, config=uds_config) as client:
-            print("Change session to programming")
-            client.change_session(2)
-            print("Reset ECU")
-            client.ecu_reset(3)
-            time.sleep(5)
-            print("Erasing flash")
-            routine_id = 0xFF00
-            try:
-                client.routine_control(routine_id, 1)
+                continue
             except NegativeResponseException:
-                pass
-            for _ in range(10):
-                time.sleep(0.5)
-                try:
-                    result = client.routine_control(routine_id, 3)
-                except TimeoutException:
-                    pass
-                except NegativeResponseException:
-                    pass
-                if result:
-                    payload = result.get_payload()
-                    if payload[-1] == 0x02:
-                        print("Finished")
-                        break
-                    elif payload[-1] == 0x01:
-                        print("Erasing...")
-                    else:
-                        print("Error")
-                        break
+                break
+        for _ in range(10):
             time.sleep(0.5)
-            for block in blocks:
-                write_block(block)
-                client.request_transfer_exit()
-
-            routine_id = 0xFF01
             try:
-                client.routine_control(routine_id, 1)
+                result = client.routine_control(routine_id, 3)
+            except TimeoutException:
+                pass
             except NegativeResponseException:
                 pass
-            for _ in range(10):
-                time.sleep(0.5)
-                try:
-                    result = client.routine_control(routine_id, 3)
-                except TimeoutException:
-                    pass
-                except NegativeResponseException:
-                    pass
-                if result:
-                    payload = result.get_payload()
-                    if payload[-1] == 0x02:
-                        print("CRC is correct")
-                        break
-                    elif payload[-1] == 0x01:
-                        print("Checking...")
-                    else:
-                        print("CRC is incorrect")
-                        break
-            time.sleep(2)
-            print("Change session to default")
-            client.change_session(1)
-            print("Reset ECU")
-            client.ecu_reset(3)
-    finally:
-        notifier.stop()
-        bus.shutdown()
+            if result:
+                payload = result.get_payload()
+                if payload[-1] == 0x02:
+                    print("Finished")
+                    break
+                elif payload[-1] == 0x01:
+                    print("Erasing...")
+                else:
+                    print("Error")
+                    break
+        time.sleep(0.5)
+        for block in blocks:
+            write_block(block)
+            client.request_transfer_exit()
+
+        routine_id = 0xFF01
+        try:
+            client.routine_control(routine_id, 1)
+        except NegativeResponseException:
+            pass
+        for _ in range(10):
+            time.sleep(0.5)
+            try:
+                result = client.routine_control(routine_id, 3)
+            except TimeoutException:
+                pass
+            except NegativeResponseException:
+                pass
+            if result:
+                payload = result.get_payload()
+                if payload[-1] == 0x02:
+                    print("CRC is correct")
+                    break
+                elif payload[-1] == 0x01:
+                    print("Checking...")
+                else:
+                    print("CRC is incorrect")
+                    break
+        time.sleep(2)
+        print("Change session to default")
+        client.change_session(1)
+        print("Reset ECU")
+        client.ecu_reset(3)
+
 
 
 if __name__ == '__main__':
