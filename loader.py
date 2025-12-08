@@ -1,4 +1,5 @@
 import argparse
+from typing import List
 
 import can
 from can.interfaces.seeedstudio import SeeedBus
@@ -26,7 +27,7 @@ class Block:
         return len(self.data)
 
 
-blocks: list[Block] = []
+blocks: List[Block] = []
 
 
 def append_data_to_block(address: int, data: bytearray):
