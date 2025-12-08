@@ -3,6 +3,7 @@ from typing import List
 
 import can
 from can.interfaces.seeedstudio import SeeedBus
+from isotp import WrongSequenceNumberError
 from udsoncan.connections import PythonIsoTpConnection
 from udsoncan.client import Client
 from udsoncan.common.MemoryLocation import MemoryLocation
@@ -146,7 +147,9 @@ def main(args):
                     break
                 except TimeoutException:
                     continue
-
+                except WrongSequenceNumberError:
+                    break
+                    
             print(f"Send {i}")
 
     with Client(conn, config=uds_config) as client:
