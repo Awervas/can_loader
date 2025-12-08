@@ -132,6 +132,7 @@ def main(args):
             raise TimeoutException
 
         block_size = int.from_bytes(response.get_payload()[2:], byteorder='big')
+        block_size = 8
         block_num = -(-block.size() // block_size)
         print(f"block size: {block_size}, total blocks: {block_num}")
 
