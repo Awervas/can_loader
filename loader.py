@@ -130,23 +130,12 @@ def main(args):
         print(f"[Block] addr=0x{base_addr:08X}, size={block.size()}, "
               f"max_from_ecu={max_block}, using={block_size}, total_blocks={block_num}")
 
-        for block_index in range(block_num):
-            start = block_index * block_size
-            stop = start + block_size
-            data = bytes(block.data[start:stop])
-            if not data:
-                continue
-
-            seq = (block_index + 1) & 0xFF
-            cur_addr = base_addr + start
-
-            print(f"  Send {block_index + 1}, seq={seq}, len={len(data)}, addr=0x{cur_addr:08X}")
-            try:
-                client.transfer_data(seq, data)
-                time.sleep(0.2)
-            except TimeoutException:
-                print(f"[ERROR] Timeout on TransferData seq={seq}, addr=0x{cur_addr:08X}, len={len(data)}")
-                raise
+        for i in range(1, block_num + 1):
+            start = (i - 1) * block_size
+            stop = i * block_size
+            data: bytes = bytes(block.data[start:stop])
+            client.transfer_data(i & 0xFF, data)
+            print(f"Send {i}")
 
     try:
         with Client(conn, config=uds_config) as client:
