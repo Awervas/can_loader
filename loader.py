@@ -140,12 +140,11 @@ def main(args):
             start = (i - 1) * block_size
             stop = i * block_size
             data: bytes = bytes(block.data[start:stop])
-            for _ in range(3):
-                try:
-                    client.transfer_data(i & 0xFF, data)
-                    break
-                except TimeoutException:
-                    break
+
+            try:
+                client.transfer_data(i & 0xFF, data)
+            except TimeoutException:
+                pass
 
             print(f"Send {i}")
 
