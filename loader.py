@@ -72,7 +72,6 @@ def main(args):
 
 
     uds_config = udsoncan.configs.default_client_config.copy()
-    uds_config['request_timeout'] = 15
 
     #
 
