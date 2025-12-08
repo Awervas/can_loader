@@ -143,6 +143,7 @@ def main(args):
 
             try:
                 client.transfer_data(i & 0xFF, data)
+                time.sleep(1)
             except TimeoutException:
                 pass
 
