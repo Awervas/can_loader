@@ -143,7 +143,7 @@ def main(args):
             print(f"  Send {block_index + 1}, seq={seq}, len={len(data)}, addr=0x{cur_addr:08X}")
             try:
                 client.transfer_data(seq, data)
-                time.sleep(1)
+                time.sleep(0.2)
             except TimeoutException:
                 print(f"[ERROR] Timeout on TransferData seq={seq}, addr=0x{cur_addr:08X}, len={len(data)}")
                 raise
