@@ -129,7 +129,12 @@ def main(args):
             start = (i - 1) * block_size
             stop = i * block_size
             data: bytes = bytes(block.data[start:stop])
-            client.transfer_data(i & 0xFF, data)
+            for _ in range(3):
+                try:
+                    client.transfer_data(i & 0xFF, data)
+                    break
+                except TimeoutException:
+                    continue
             print(f"Send {i}")
 
     with Client(conn, config=uds_config) as client:
