@@ -19,6 +19,7 @@ START_ROUTINE = 1
 STOP_ROUTINE = 2
 REQUEST_ROUTINE_RESULTS = 3
 
+
 class Block:
     data: bytearray
     address: int
@@ -77,7 +78,6 @@ def main(args):
         "listen_mode": False,
     }
 
-
     uds_config = udsoncan.configs.default_client_config.copy()
     uds_config['p2_timeout'] = 2
     #
@@ -105,7 +105,6 @@ def main(args):
 
     else:
         raise ValueError
-
 
     print('INIT BUS')
     time.sleep(0.55)
@@ -161,9 +160,21 @@ def main(args):
 
     with Client(conn, config=uds_config) as client:
         print("Change session to programming")
-        client.change_session(2)
+        for _ in range(3):
+            try:
+                client.change_session(2)
+                break
+            except TimeoutException:
+                continue
+
         print("Reset ECU")
-        client.ecu_reset(3)
+        for _ in range(3):
+            try:
+                client.ecu_reset(3)
+                break
+            except TimeoutException:
+                continue
+            
         time.sleep(5)
         print("Erasing flash")
         for erase_try in range(5):
@@ -225,7 +236,6 @@ def main(args):
         client.change_session(1)
         print("Reset ECU")
         client.ecu_reset(3)
-
 
 
 if __name__ == '__main__':
