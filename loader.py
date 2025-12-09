@@ -157,7 +157,8 @@ def main(args):
                 except WrongSequenceNumberError:
                     continue
 
-
+            else:
+                raise TimeoutException
 
     with Client(conn, config=uds_config) as client:
         print("Change session to programming")
