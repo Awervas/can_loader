@@ -12,6 +12,12 @@ import udsoncan.configs
 import isotp
 import time
 
+UDS_ERASE_FLASH_ROUTINE_ID = 0xFF00
+UDS_CRC_CHECK_ROUTINE_ID = 0xFF01
+
+START_ROUTINE = 1
+STOP_ROUTINE = 2
+REQUEST_ROUTINE_RESULTS = 3
 
 class Block:
     data: bytearray
@@ -73,7 +79,7 @@ def main(args):
 
 
     uds_config = udsoncan.configs.default_client_config.copy()
-
+    uds_config['p2_timeout'] = 2
     #
 
     if args.port == 'can0':
@@ -160,10 +166,9 @@ def main(args):
         client.ecu_reset(3)
         time.sleep(5)
         print("Erasing flash")
-        routine_id = 0xFF00
         for erase_try in range(5):
             try:
-                client.routine_control(routine_id, 1)
+                client.routine_control(UDS_ERASE_FLASH_ROUTINE_ID, START_ROUTINE)
                 break
             except TimeoutException:
                 continue
@@ -172,7 +177,7 @@ def main(args):
         for _ in range(10):
             time.sleep(0.5)
             try:
-                result = client.routine_control(routine_id, 3)
+                result = client.routine_control(UDS_ERASE_FLASH_ROUTINE_ID, REQUEST_ROUTINE_RESULTS)
             except TimeoutException:
                 pass
             except NegativeResponseException:
