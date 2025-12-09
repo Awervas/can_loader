@@ -148,7 +148,7 @@ def main(args):
             data: bytes = bytes(block.data[start:stop])
             for _ in range(3):
                 try:
-                    client.transfer_data(i & 0xFF, data)
+                    client.transfer_data(i, data)
                     time.sleep(args.transfer_delay)
                     break
                 except TimeoutException:
@@ -174,7 +174,7 @@ def main(args):
                 break
             except TimeoutException:
                 continue
-            
+
         time.sleep(5)
         print("Erasing flash")
         for erase_try in range(5):
