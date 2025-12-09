@@ -146,17 +146,18 @@ def main(args):
             start = (i - 1) * block_size
             stop = i * block_size
             data: bytes = bytes(block.data[start:stop])
-            for _ in range(3):
+            for _ in range(5):
                 try:
+                    print(f"Send {i}, attempt: {_ + 1}")
                     client.transfer_data(i & 0xFF, data)
                     time.sleep(args.transfer_delay)
                     break
                 except TimeoutException:
                     continue
                 except WrongSequenceNumberError:
-                    break
+                    continue
 
-            print(f"Send {i}")
+
 
     with Client(conn, config=uds_config) as client:
         print("Change session to programming")
@@ -243,7 +244,7 @@ if __name__ == '__main__':
     parser.add_argument('--path', default='smc.bin')
     parser.add_argument('--port', default='can0')
     parser.add_argument('--block-size', default=256, type=int)
-    parser.add_argument('--transfer-delay', type=float, default=0.1)
+    parser.add_argument('--transfer-delay', type=float, default=0.01)
     args = parser.parse_args()
 
     main(args)
