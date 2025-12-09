@@ -101,7 +101,7 @@ def main(args):
         )
 
     elif 'COM' in args.port.upper():
-        bus = SeeedBus(channel=args.port, frame_type="EXT")
+        bus = SeeedBus(channel=args.port, frame_type="EXT", bitrate=500000)
 
     else:
         raise ValueError
