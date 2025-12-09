@@ -144,7 +144,7 @@ def main(args):
             for _ in range(3):
                 try:
                     client.transfer_data(i & 0xFF, data)
-                    time.sleep(0.1)
+                    time.sleep(args.transfer_delay)
                     break
                 except TimeoutException:
                     continue
@@ -227,7 +227,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="CAN LOADER")
     parser.add_argument('--path', default='smc.bin')
     parser.add_argument('--port', default='can0')
-    parser.add_argument('--block-size', default=256)
+    parser.add_argument('--block-size', default=256, type=int)
+    parser.add_argument('--transfer-delay', type=float, default=0.1)
     args = parser.parse_args()
 
     main(args)
