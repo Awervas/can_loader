@@ -148,7 +148,7 @@ def main(args):
             data: bytes = bytes(block.data[start:stop])
             for _ in range(3):
                 try:
-                    client.transfer_data(i, data)
+                    client.transfer_data(i & 0xFF, data)
                     time.sleep(args.transfer_delay)
                     break
                 except TimeoutException:
