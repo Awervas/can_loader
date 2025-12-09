@@ -133,7 +133,7 @@ def main(args):
             raise TimeoutException
 
         block_size = int.from_bytes(response.get_payload()[2:], byteorder='big')
-        block_size = min(block_size, 8)
+        block_size = min(block_size, args.block_size)
         block_num = -(-block.size() // block_size)
         print(f"block size: {block_size}, total blocks: {block_num}")
 
@@ -227,6 +227,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="CAN LOADER")
     parser.add_argument('--path', default='smc.bin')
     parser.add_argument('--port', default='can0')
+    parser.add_argument('--block-size', default=256)
     args = parser.parse_args()
 
     main(args)
