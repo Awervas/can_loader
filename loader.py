@@ -106,7 +106,7 @@ def main(args):
 
         bus = can.interface.Bus(
             bustype="zlgcan",
-            libpath=sys.path[0]+"library/",
+            libpath=sys.path[0]+"/library/",
             channel=0,
             device_type=ZCANDeviceType.ZCAN_USBCAN_2E_U,
             configs=[{'bitrate': 500000, 'resistance': 1}, {'bitrate': 500000, 'resistance': 1}]
