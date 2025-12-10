@@ -1,4 +1,5 @@
 import argparse
+import random
 from typing import List
 
 import can
@@ -151,9 +152,10 @@ def main(args):
                 try:
                     print(f"Send {i}, attempt: {_ + 1}")
                     client.transfer_data(i & 0xFF, data)
-                    time.sleep(args.transfer_delay)
+                    time.sleep(random.random())
                     break
                 except TimeoutException:
+                    time.sleep(random.random())
                     continue
                 except NegativeResponseException:
                     break
