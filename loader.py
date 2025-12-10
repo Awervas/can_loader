@@ -12,7 +12,7 @@ from udsoncan.exceptions import NegativeResponseException, TimeoutException
 import udsoncan.configs
 import isotp
 import time
-
+from zlgcan.zlgcan import ZCanTxMode, ZCANDeviceType
 UDS_ERASE_FLASH_ROUTINE_ID = 0xFF00
 UDS_CRC_CHECK_ROUTINE_ID = 0xFF01
 
@@ -107,6 +107,7 @@ def main(args):
             bustype="zlgcan",
             libpath="library/",
             channel=0,
+            device_type=ZCANDeviceType.ZCAN_USBCAN_E_U,
             configs=[{'bitrate': 500000, 'resistance': 1}, {'bitrate': 500000, 'resistance': 1}]
         )
 
