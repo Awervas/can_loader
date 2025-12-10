@@ -207,7 +207,6 @@ def main(args):
                     print("Error")
                     break
         time.sleep(0.5)
-        client.set_config('request_timeout', 1)
         for block in blocks:
             write_block(block)
             client.request_transfer_exit()
