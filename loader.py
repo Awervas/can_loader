@@ -208,6 +208,7 @@ def main(args):
             time.sleep(0.5)
             try:
                 result = client.routine_control(UDS_ERASE_FLASH_ROUTINE_ID, REQUEST_ROUTINE_RESULTS)
+                continue
             except TimeoutException:
                 pass
             except NegativeResponseException:
