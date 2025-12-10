@@ -5,7 +5,10 @@ from typing import List
 
 import can
 from can.interfaces.canalystii import CANalystIIBus
-from can.interfaces.seeedstudio import SeeedBus
+try:
+    from can.interfaces.seeedstudio import SeeedBus
+except ImportError:
+    pass
 from isotp import WrongSequenceNumberError
 from udsoncan.connections import PythonIsoTpConnection
 from udsoncan.client import Client
