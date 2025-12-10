@@ -80,7 +80,7 @@ def main(args):
 
     uds_config = udsoncan.configs.default_client_config.copy()
     uds_config['p2_timeout'] = 2
-    uds_config['request_timeout']= 2
+    uds_config['request_timeout'] = 5
     #
 
     if args.port == 'can0':
@@ -147,7 +147,7 @@ def main(args):
             start = (i - 1) * block_size
             stop = i * block_size
             data: bytes = bytes(block.data[start:stop])
-            for _ in range(5):
+            for _ in range(10):
                 try:
                     print(f"Send {i}, attempt: {_ + 1}")
                     client.transfer_data(i & 0xFF, data)
@@ -207,6 +207,7 @@ def main(args):
                     print("Error")
                     break
         time.sleep(0.5)
+        client.set_config('request_timeout', 1)
         for block in blocks:
             write_block(block)
             client.request_transfer_exit()
