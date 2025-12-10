@@ -109,7 +109,7 @@ def main(args):
             libpath=sys.path[0]+"/library/",
             channel=0,
             device_type=ZCANDeviceType.ZCAN_USBCAN_E_U,
-            configs=[{'bitrate': 500000, 'resistance': 1}, {'bitrate': 500000, 'resistance': 1}]
+            configs=[{'bitrate': 500000, 'resistance': 1}]
         )
 
     elif 'COM' in args.port.upper():
