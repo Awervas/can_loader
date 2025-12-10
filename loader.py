@@ -101,6 +101,14 @@ def main(args):
             channel="PCAN_USBBUS1",  # имя канала, см. ниже
             bitrate=500000  # нужная скорость (500k, 250k и т.д.)
         )
+    elif args.port == 'zlgcan':
+
+        bus = can.interface.Bus(
+            bustype="zlgcan",
+            libpath="library/",
+            channel=0,
+            bitrate=500000
+        )
 
     elif 'COM' in args.port.upper():
         bus = SeeedBus(channel=args.port, frame_type="EXT", bitrate=500000, timeout=2)
