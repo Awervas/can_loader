@@ -7,6 +7,7 @@ import can
 from can.interfaces.canalystii import CANalystIIBus
 try:
     from can.interfaces.seeedstudio import SeeedBus
+    from zlgcan.zlgcan import ZCanTxMode, ZCANDeviceType
 except ImportError:
     pass
 from isotp import WrongSequenceNumberError
@@ -17,7 +18,7 @@ from udsoncan.exceptions import NegativeResponseException, TimeoutException
 import udsoncan.configs
 import isotp
 import time
-from zlgcan.zlgcan import ZCanTxMode, ZCANDeviceType
+
 UDS_ERASE_FLASH_ROUTINE_ID = 0xFF00
 UDS_CRC_CHECK_ROUTINE_ID = 0xFF01
 
