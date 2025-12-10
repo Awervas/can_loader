@@ -120,7 +120,7 @@ def main(args):
         bus = can.Bus(
             bustype="canalystii", 
             channel=0,  
-            bitrate=500000,  
+            baud=500000,
 
         )
     elif 'COM' in args.port.upper():
