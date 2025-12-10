@@ -105,7 +105,7 @@ def main(args):
         )
     elif args.port == 'zlgcan':
 
-        bus = can.interface.Bus(
+        """bus = can.interface.Bus(
             bustype="zlgcan",
             libpath=sys.path[0]+"/library/",
             channel=0,
@@ -118,7 +118,7 @@ def main(args):
             channel=0,  
             bitrate=500000,  
 
-        )"""
+        )
     elif 'COM' in args.port.upper():
         bus = SeeedBus(channel=args.port, frame_type="EXT", bitrate=500000, timeout=2)
 
