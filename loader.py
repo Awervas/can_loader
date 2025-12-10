@@ -107,7 +107,7 @@ def main(args):
             bustype="zlgcan",
             libpath="library/",
             channel=0,
-            bitrate=500000
+            configs=[{'bitrate': 500000, 'resistance': 1}, {'bitrate': 500000, 'resistance': 1}]
         )
 
     elif 'COM' in args.port.upper():
