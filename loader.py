@@ -1,5 +1,6 @@
 import argparse
 import random
+import sys
 from typing import List
 
 import can
@@ -105,7 +106,7 @@ def main(args):
 
         bus = can.interface.Bus(
             bustype="zlgcan",
-            libpath="library/",
+            libpath=sys.path[0]+"library/",
             channel=0,
             device_type=ZCANDeviceType.ZCAN_USBCAN_E_U,
             configs=[{'bitrate': 500000, 'resistance': 1}, {'bitrate': 500000, 'resistance': 1}]
