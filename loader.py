@@ -4,6 +4,7 @@ import sys
 from typing import List
 
 import can
+from can.interfaces.canalystii import CANalystIIBus
 from can.interfaces.seeedstudio import SeeedBus
 from isotp import WrongSequenceNumberError
 from udsoncan.connections import PythonIsoTpConnection
@@ -103,19 +104,21 @@ def main(args):
             bitrate=500000  # нужная скорость (500k, 250k и т.д.)
         )
     elif args.port == 'zlgcan':
-        """
+
         bus = can.interface.Bus(
             bustype="zlgcan",
             libpath=sys.path[0]+"/library/",
             channel=0,
             device_type=ZCANDeviceType.ZCAN_USBCAN_E_U,
             configs=[{'bitrate': 500000, 'resistance': 1}]
-        )"""
-        bus = can.interfaces.canalystii.CANalystIIBus(
-            channel=0,
-            device=0,
-            bitrate=500000,
         )
+        """
+        bus = can.Bus(
+            bustype="canalystii", 
+            channel=0,  
+            bitrate=500000,  
+
+        )"""
     elif 'COM' in args.port.upper():
         bus = SeeedBus(channel=args.port, frame_type="EXT", bitrate=500000, timeout=2)
 
