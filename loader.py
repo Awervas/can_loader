@@ -80,6 +80,7 @@ def main(args):
 
     uds_config = udsoncan.configs.default_client_config.copy()
     uds_config['p2_timeout'] = 2
+    uds_config['request_timeout']= 2
     #
 
     if args.port == 'can0':
@@ -154,8 +155,8 @@ def main(args):
                     break
                 except TimeoutException:
                     continue
-                except WrongSequenceNumberError:
-                    continue
+                except NegativeResponseException:
+                    break
 
             else:
                 raise TimeoutException
