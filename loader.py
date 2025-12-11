@@ -126,9 +126,9 @@ def main(args):
     time.sleep(0.55)
     notifier = can.Notifier(bus, [])
     tp_addr = isotp.Address(
-        isotp.AddressingMode.NormalFixed_29bits,
-        target_address=0xF3,
-        source_address=0xF1,
+        isotp.AddressingMode.Normal_29bits,
+        txid=0x0ADAF3F1,
+        rxid=0x0ADAF1F3,
     )
     stack = isotp.NotifierBasedCanStack(
         bus=bus, notifier=notifier, address=tp_addr, params=isotp_params
