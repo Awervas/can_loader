@@ -54,7 +54,7 @@ def append_data_to_block(address: int, data: bytearray):
 
 
 def main(args):
-    my_block_size = 1024
+    my_block_size = args.block_size
     with open(args.path, "rb") as fd:
         address = 0
         while True:
