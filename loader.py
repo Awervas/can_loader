@@ -20,6 +20,8 @@ import time
 
 UDS_ERASE_FLASH_ROUTINE_ID = 0xFF00
 UDS_CRC_CHECK_ROUTINE_ID = 0xFF01
+TX_ID = 0x0ADAF3F1
+RX_ID = 0x0ADAF1F3
 
 START_ROUTINE = 1
 STOP_ROUTINE = 2
@@ -127,8 +129,8 @@ def main(args):
     notifier = can.Notifier(bus, [])
     tp_addr = isotp.Address(
         isotp.AddressingMode.Normal_29bits,
-        txid=0x0ADAF3F1,
-        rxid=0x0ADAF1F3,
+        txid=TX_ID if args.mode == 'firmware' else 0x8ADAF3F1,
+        rxid=RX_ID if args.mode == 'firmware' else 0x8ADAF1F3,
     )
     stack = isotp.NotifierBasedCanStack(
         bus=bus, notifier=notifier, address=tp_addr, params=isotp_params
@@ -263,6 +265,7 @@ if __name__ == '__main__':
     parser.add_argument('--port', default='can0')
     parser.add_argument('--block-size', default=256, type=int)
     parser.add_argument('--transfer-delay', type=float, default=0.01)
+    parser.add_argument('--mode', default='firmware', choices=['firmware', 'bootloader'])
     args = parser.parse_args()
 
     main(args)
