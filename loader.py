@@ -127,11 +127,17 @@ def main(args):
     print('INIT BUS')
     time.sleep(0.55)
     notifier = can.Notifier(bus, [])
+
+    tx_id = TX_ID if args.mode == 'firmware' else 0x8ADAF3F1
+    rx_id = RX_ID if args.mode == 'firmware' else 0x8ADAF1F3
+
+    print(f'TX_ID={tx_id} RX_ID={rx_id}')
     tp_addr = isotp.Address(
         isotp.AddressingMode.Normal_29bits,
-        txid=TX_ID if args.mode == 'firmware' else 0x8ADAF3F1,
-        rxid=RX_ID if args.mode == 'firmware' else 0x8ADAF1F3,
+        txid=tx_id,
+        rxid=rx_id,
     )
+
     stack = isotp.NotifierBasedCanStack(
         bus=bus, notifier=notifier, address=tp_addr, params=isotp_params
     )
