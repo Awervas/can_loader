@@ -131,7 +131,7 @@ def main(args):
     tx_id = TX_ID if args.mode == 'firmware' else 0x8ADAF3F1
     rx_id = RX_ID if args.mode == 'firmware' else 0x8ADAF1F3
 
-    print(f'TX_ID={tx_id} RX_ID={rx_id}')
+    print(f'TX_ID={tx_id:x} RX_ID={rx_id:x}')
     tp_addr = isotp.Address(
         isotp.AddressingMode.Normal_29bits,
         txid=tx_id,
