@@ -20,8 +20,12 @@ import time
 
 UDS_ERASE_FLASH_ROUTINE_ID = 0xFF00
 UDS_CRC_CHECK_ROUTINE_ID = 0xFF01
-TX_ID = 0x0ADAF3F1
-RX_ID = 0x0ADAF1F3
+TX_ID_FIRMWARE = 0x0ADAF3F1
+RX_ID_FIRMWARE = 0x0ADAF1F3
+
+
+TX_ID_BOOTLOADER = 0x18DAF3F1
+RX_ID_BOOTLOADER = 0x18DAF1F3
 
 START_ROUTINE = 1
 STOP_ROUTINE = 2
@@ -128,8 +132,8 @@ def main(args):
     time.sleep(0.55)
     notifier = can.Notifier(bus, [])
 
-    tx_id = TX_ID if args.mode == 'firmware' else 0x8ADAF3F1
-    rx_id = RX_ID if args.mode == 'firmware' else 0x8ADAF1F3
+    tx_id = TX_ID_FIRMWARE if args.mode == 'firmware' else TX_ID_BOOTLOADER
+    rx_id = RX_ID_FIRMWARE if args.mode == 'firmware' else RX_ID_BOOTLOADER
 
     print(f'TX_ID={tx_id:x} RX_ID={rx_id:x}')
     tp_addr = isotp.Address(
